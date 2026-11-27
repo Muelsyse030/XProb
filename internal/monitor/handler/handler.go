@@ -83,8 +83,9 @@ func (h *Handler) Get(c *gin.Context) {
 	writeMonitor(c, http.StatusOK, m)
 }
 
-func (h *Handler) GetMonitorByWorkspaceID(c *gin.Context) {
-	list, err := h.service.GetMonitorByWorkspaceID(c.Request.Context(), c.Param("workspaceId"))
+func (h *Handler) List(c *gin.Context) {
+	workspaceID := c.Param("workspaceId")
+	list, err := h.service.ListMonitors(c.Request.Context(), workspaceID)
 	if err != nil {
 		writeInternalError(c, "list monitors", err)
 		return

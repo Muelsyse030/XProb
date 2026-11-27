@@ -17,7 +17,7 @@ type monitorResponse struct {
 }
 
 func TestCreateMonitorHTTP(t *testing.T) {
-	req := httptest.NewRequest(
+	req := newMonitorTestRequest(
 		http.MethodPost,
 		"/v1/workspaces/demo/monitors",
 		strings.NewReader(`{"name":"  首页 API  "}`),
@@ -44,7 +44,7 @@ func TestCreateMonitorHTTP(t *testing.T) {
 	}
 
 	id := strconv.Itoa(body.ID)
-	getReq := httptest.NewRequest(http.MethodGet, "/v1/workspaces/demo/monitors/"+id, nil)
+	getReq := newMonitorTestRequest(http.MethodGet, "/v1/workspaces/demo/monitors/"+id, nil)
 	getRec := httptest.NewRecorder()
 	router.ServeHTTP(getRec, getReq)
 
@@ -71,7 +71,7 @@ func TestCreateMonitorHTTP(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, tc.path, nil)
+			req := newMonitorTestRequest(http.MethodGet, tc.path, nil)
 			rec := httptest.NewRecorder()
 			router.ServeHTTP(rec, req)
 			if rec.Code != http.StatusNotFound {
@@ -83,7 +83,7 @@ func TestCreateMonitorHTTP(t *testing.T) {
 }
 
 func TestCreateMonitorErr(t *testing.T) {
-	req := httptest.NewRequest(
+	req := newMonitorTestRequest(
 		http.MethodPost,
 		"/v1/workspaces/demo/monitors",
 		strings.NewReader(`{"name":" "}`),
@@ -112,7 +112,7 @@ func TestCreateMonitorRejectsBadBody(t *testing.T) {
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodPost, "/v1/workspaces/demo/monitors", strings.NewReader(tc.body))
+			req := newMonitorTestRequest(http.MethodPost, "/v1/workspaces/demo/monitors", strings.NewReader(tc.body))
 			req.Header.Set("Content-Type", "application/json")
 			rec := httptest.NewRecorder()
 			router.ServeHTTP(rec, req)
@@ -128,7 +128,7 @@ func TestListMonitorsHTTP(t *testing.T) {
 	createMonitor := func(workspaceID, body string) monitorResponse {
 		t.Helper()
 		path := "/v1/workspaces/" + workspaceID + "/monitors"
-		req := httptest.NewRequest(http.MethodPost, path, strings.NewReader(body))
+		req := newMonitorTestRequest(http.MethodPost, path, strings.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, req)
@@ -149,7 +149,7 @@ func TestListMonitorsHTTP(t *testing.T) {
 	second := createMonitor("demo", `{"name":"搜索 API"}`)
 
 	t.Run("lists only the requested workspace in ID order", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/v1/workspaces/demo/monitors", nil)
+		req := newMonitorTestRequest(http.MethodGet, "/v1/workspaces/demo/monitors", nil)
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, req)
 
@@ -170,7 +170,7 @@ func TestListMonitorsHTTP(t *testing.T) {
 	})
 
 	t.Run("returns an empty JSON array", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/v1/workspaces/empty/monitors", nil)
+		req := newMonitorTestRequest(http.MethodGet, "/v1/workspaces/empty/monitors", nil)
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, req)
 

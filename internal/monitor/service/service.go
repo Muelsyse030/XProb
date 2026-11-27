@@ -13,7 +13,7 @@ var ErrNameRequired = errors.New("name is required")
 type Repository interface {
 	Insert(ctx context.Context, m monitor.Monitor) (monitor.Monitor, error)
 	FindByID(ctx context.Context, workspaceID string, id int) (monitor.Monitor, error)
-	FindByWorkspaceID(ctx context.Context, workespace string) ([]monitor.Monitor, error)
+	FindByWorkspaceID(ctx context.Context, workspaceID string) ([]monitor.Monitor, error)
 }
 
 type Service struct {
@@ -41,6 +41,6 @@ func (s *Service) GetMonitor(ctx context.Context, workspaceID string, id int) (m
 	return s.repo.FindByID(ctx, workspaceID, id)
 }
 
-func (s *Service) GetMonitorByWorkspaceID(ctx context.Context, workespace string) ([]monitor.Monitor, error) {
-	return s.repo.FindByWorkspaceID(ctx, workespace)
+func (s *Service) ListMonitors(ctx context.Context, workspaceID string) ([]monitor.Monitor, error) {
+	return s.repo.FindByWorkspaceID(ctx, workspaceID)
 }

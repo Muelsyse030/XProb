@@ -51,7 +51,6 @@ func Open(cfg Config) (*Repository, error) {
 	return &Repository{db: db}, nil
 }
 
-// monitorRow is the MySQL representation; the domain type does not depend on GORM.
 type monitorRow struct {
 	ID          int `gorm:"primaryKey;autoIncrement"`
 	WorkspaceID string
